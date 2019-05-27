@@ -46,6 +46,18 @@ void cetakStruk(pointer p){
     return;
 }
 
+void bacaManual(){
+    ifstream manual;
+    char text;
+    manual.open("manual.txt");
+    while(!manual.eof()){
+        manual.get(text);
+        cout<<text;
+    }
+    manual.close();
+    return;
+}
+
 void createQueue(Queue& Q){
     Q.Head = NULL;
     Q.Tail = NULL;
@@ -294,8 +306,9 @@ int main(){
         cout<<"\n3.Edit Status Pembayaran";
         cout<<"\n4.Histori Transaksi Selesai";
         cout<<"\n5.Daftar Orang Sudah Bayar";
-        cout<<"\n6.Daftar Orang Belum Bayar"; 
-        cout<<"\n7.Exit";
+        cout<<"\n6.Daftar Orang Belum Bayar";
+        cout<<"\n7.Baca Manual Book"; 
+        cout<<"\n8.Exit";
         cout<<"\nMenu = ";cin>>menu;
         switch (menu)
         {
@@ -323,9 +336,13 @@ int main(){
             traversalBelum(transaksi);
             system("Pause");
             break;
-        
+        case 7:
+        bacaManual();
+        cout<<endl;
+        system("pause");
+            break;
         default:
             break;
         }
-    }while(menu>0&&menu<=6);
+    }while(menu>0&&menu<=7);
 }
