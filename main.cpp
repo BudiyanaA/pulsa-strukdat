@@ -175,7 +175,7 @@ void kirimPulsa(Queue& Q){
 void linearSearch(Queue Q, string key,int& status,pointer& p){
     p = Q.Head;
     status = 0;
-    while(pCari!=NULL&&status==0){
+    while(p!=NULL&&status==0){
         if (p->nama == key) status=1;
         else p = p->next;
     }
@@ -201,13 +201,6 @@ void editStatus(Queue& Q){
     }
     else{
         cout<<"Tidak ditemukan"<<endl;
-    }
-}
-
-void sudahBayr(Queue Q){
-    cout<<"LIST YANG SUDAH BAYAR";
-    for(int i=0;i<n;i++){
-        cout<<i+1<<"."<<Q.Head<<",";
     }
 }
 
