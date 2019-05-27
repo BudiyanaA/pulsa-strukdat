@@ -1,11 +1,15 @@
 #include <iostream>
 #include <conio.h>
+#include <fstream>
+#include <string.h>
 using namespace std;
 
 struct Elemen{
     string nama;
     string nope;
     bool pay;
+    int nominal;
+    int harga;
     Elemen* next;
 };
 typedef Elemen* pointer;
@@ -22,16 +26,38 @@ struct Stack{
 };
 Stack histori;
 
+void cetakStruk(pointer p){
+    ofstream struk;
+    string data = p->nama;
+    char nama[] = "struk_";
+    int n = data.length();
+    char nama2[n+1];
+    strcpy(nama2,data.c_str());
+    strcat(nama,nama2);
+    strcat(nama,".txt");
+    struk.open(nama,ios::app);
+    struk<<"Nama    : "<<p->nama<<endl;
+    struk<<"Nomor HP: "<<p->nope<<endl;
+    struk<<"Nominal : "<<p->nominal<<endl;
+    struk<<"Harga   : "<<p->harga<<endl;
+    struk<<"***LUNAS***";
+    struk.close();
+    cout<<"Struk Tercetak\n";
+    return;
+}
+
 void createQueue(Queue& Q){
     Q.Head = NULL;
     Q.Tail = NULL;
 }
 
-void createElemen(pointer& p, string nama, string nope, bool pay){
+void createElemen(pointer& p, string nama, string nope, bool pay, int nominal){
     p = new Elemen;
     p->nama = nama;
     p->nope = nope;
     p->pay = pay;
+    p->nominal = nominal;
+    p->harga = nominal+2000;
     p->next = NULL;
 }
 
@@ -92,7 +118,7 @@ void pop(Stack& S,pointer& pDel){
 void traversal(Queue Q){
     pointer pHelp = Q.Head;
     while(pHelp!=NULL){
-        cout<<pHelp->nama<<"\t | "<<pHelp->nope<<"\t | "<<pHelp->pay;
+        cout<<pHelp->nama<<"\t | "<<pHelp->nope<<"\t | "<<pHelp->pay<<"\t | "<<pHelp->nominal<<"   | "<<pHelp->harga;
         pHelp = pHelp->next;
         cout<<endl;
     }
@@ -144,7 +170,7 @@ void traversalStack(Stack S){
 }
 
 void pesanPulsa(Queue& Q,pointer p){
-    int n;
+    int n,nominal;
     string nama, nope;
     char bayar;
     bool pay;
@@ -152,10 +178,11 @@ void pesanPulsa(Queue& Q,pointer p){
     for (int i=0;i<n;i++){
         cout<<"Nama      : ";cin>>nama;
         cout<<"Nomor Hp  : ";cin>>nope;
+        cout<<"Nominal   : ";cin>>nominal;
         cout<<"Bayar(y/n): ";cin>>bayar;
         if (bayar=='y'||bayar=='Y') pay=true;
         else pay=false;
-        createElemen(p,nama,nope,pay);
+        createElemen(p,nama,nope,pay,nominal);
         enQueue(Q,p);
         enQueue(archive,p);
     }
@@ -180,6 +207,8 @@ void kirimPulsa(Queue& Q){
             deQueue(Q,pDel);
             push(histori,pDel);
             cout<<"Pulsa Terkirim..\n";
+            //cetak struk.txt
+            cetakStruk(pDel);
             system("pause");
         }
         else{
@@ -238,6 +267,7 @@ int main(){
     int menu;
     string nama[3] = {"Budi","Asep","Yana"};
     string nope[3] = {"085722040358","089670427663","082120815276"};
+    int nominal[3] = {5000,10000,20000};
     bool pay[3] = {true,false,true};
     createQueue(transaksi);
     // createElemen(p);
@@ -245,7 +275,7 @@ int main(){
     // deleteQueue(Q,h);
     // traversal(Q);
     for (int i=0;i<3;i++){
-        createElemen(p,nama[i],nope[i],pay[i]);
+        createElemen(p,nama[i],nope[i],pay[i],nominal[i]);
         enQueue(transaksi,p);
     }
     do{
@@ -256,8 +286,8 @@ int main(){
         // cout<<"\nHistory : ";if(histori.Top!=NULL) cout<<histori.Top->nama;
         cout<<"\nAntrian Pelanggan\n";
         cout<<"----*(Kasir)*----\n";
-        cout<<"Nama\t | No Hp\t | Status Bayar\n";
-        cout<<"-------------------------------\n";
+        cout<<"Nama\t | No Hp\t | Bayar | Nominal | Harga\n";
+        cout<<"---------------------------------------------------\n";
         traversal(transaksi);
         cout<<"\n1.Pesan Pulsa (multi)";
         cout<<"\n2.Kirim Pulsa";
