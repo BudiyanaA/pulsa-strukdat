@@ -27,11 +27,11 @@ void createQueue(Queue& Q){
     Q.Tail = NULL;
 }
 
-void createElemen(pointer& p, string nama, string nope){
+void createElemen(pointer& p, string nama, string nope, bool pay){
     p = new Elemen;
     p->nama = nama;
     p->nope = nope;
-    p->pay = false;
+    p->pay = pay;
     p->next = NULL;
 }
 
@@ -92,38 +92,52 @@ void pop(Stack& S,pointer& pDel){
 void traversal(Queue Q){
     pointer pHelp = Q.Head;
     while(pHelp!=NULL){
-        cout<<pHelp->nama<<" | "<<pHelp->nope;
+        cout<<pHelp->nama<<"\t | "<<pHelp->nope<<"\t | "<<pHelp->pay;
         pHelp = pHelp->next;
         cout<<endl;
     }
 }
 
 void traversalBayar(Queue Q){
+    if (Q.Head==NULL) {
+        cout<<"List Kosong\n";
+        system("pause");
+        return;
+    }
     pointer pHelp = Q.Head;
     while(pHelp!=NULL){
-        if(pHelp->pay == true){
-        cout<<pHelp->nama<<" | "<<pHelp->nope;
-        pHelp = pHelp->next;
-        cout<<endl;
+        if(pHelp->pay==true){
+            cout<<pHelp->nama<<" | "<<pHelp->nope;
+            cout<<endl;
         }
+        pHelp = pHelp->next;
     }
 }
 
 void traversalBelum(Queue Q){
+    if (Q.Head==NULL) {
+        cout<<"List Kosong\n";
+        system("pause");
+        return;
+    }
     pointer pHelp = Q.Head;
     while(pHelp!=NULL){
         if(pHelp->pay == false){
         cout<<pHelp->nama<<" | "<<pHelp->nope;
-        pHelp = pHelp->next;
         cout<<endl;
         }
+        pHelp = pHelp->next;
     }
 }
 
 void traversalStack(Stack S){
+    if (S.Top==NULL) {
+        cout<<"List Kosong\n";
+        return;
+    }
     pointer pHelp = S.Top;
     while(pHelp!=NULL){
-        cout<<pHelp->nama<<" | "<<pHelp->nope;
+        cout<<pHelp->nama<<"\t | "<<pHelp->nope;
         pHelp = pHelp->next;
         cout<<endl;
     }
@@ -132,16 +146,23 @@ void traversalStack(Stack S){
 void pesanPulsa(Queue& Q,pointer p){
     int n;
     string nama, nope;
+    char bayar;
+    bool pay;
     cout<<"Banyak Pesanan: ";cin>>n;
     for (int i=0;i<n;i++){
-        cout<<"Nama     : ";cin>>nama;
-        cout<<"Nomor Hp : ";cin>>nope;
-        createElemen(p,nama,nope);
+        cout<<"Nama      : ";cin>>nama;
+        cout<<"Nomor Hp  : ";cin>>nope;
+        cout<<"Bayar(y/n): ";cin>>bayar;
+        if (bayar=='y'||bayar=='Y') pay=true;
+        else pay=false;
+        createElemen(p,nama,nope,pay);
         enQueue(Q,p);
+        enQueue(archive,p);
     }
 }
 
 void kirimPulsa(Queue& Q){
+    system("cls");
     string status;
     int choose;
     pointer pInp,pDel;
@@ -150,9 +171,10 @@ void kirimPulsa(Queue& Q){
     if(Q.Head->pay == true) status = "Sudah Bayar";
     else status = "Belum Bayar";
     cout<<"Status   : "<<status<<endl;
-    cout<<"Aksi:\n";
-    cout<<"1. Kirim Pulsa";
-    cout<<"Pilih Aksi=>";cin>>choose;
+    cout<<"Aksi:";
+    cout<<"\n1. Kirim Pulsa";
+    cout<<"\n2. Back";
+    cout<<"\nPilih Aksi=>";cin>>choose;
     if(choose==1){
         if(Q.Head->pay == true){
             deQueue(Q,pDel);
@@ -162,14 +184,20 @@ void kirimPulsa(Queue& Q){
         }
         else{
             cout<<"Customer Belum Bayar\n";
-            enQueue(archive,pInp);
+            deQueue(Q,pDel);
+            enQueue(archive,pDel);
+            system("pause");
         }
+    }
+    if(choose==2){
+        return;
     }
     if(Q.Head!=NULL){
         kirimPulsa(Q);
     }
     else{
         cout<<"Tidak Ada Lagi Customer\n";
+        system("pause");
     }
 }
 void linearSearch(Queue Q, string key,int& status,pointer& p){
@@ -200,7 +228,8 @@ void editStatus(Queue& Q){
         enQueue(transaksi,pDel);
     }
     else{
-        cout<<"Tidak ditemukan"<<endl;
+        cout<<"Tidak ditemukan\n"<<endl;
+        system("pause");
     }
 }
 
@@ -208,18 +237,27 @@ int main(){
     pointer p,h;
     int menu;
     string nama[3] = {"Budi","Asep","Yana"};
-    string nope[3] = {"123","321","666"};
+    string nope[3] = {"085722040358","089670427663","082120815276"};
+    bool pay[3] = {true,false,true};
     createQueue(transaksi);
     // createElemen(p);
     // insertQueue(Q,p);
     // deleteQueue(Q,h);
     // traversal(Q);
     for (int i=0;i<3;i++){
-        createElemen(p,nama[i],nope[i]);
+        createElemen(p,nama[i],nope[i],pay[i]);
         enQueue(transaksi,p);
     }
     do{
         system("cls");
+        // cuma buat tes
+        // cout<<"\nArchive : ";if(archive.Head!=NULL) cout<<archive.Head->nama;
+        // cout<<"\nKasir   : ";if(transaksi.Head!=NULL) cout<<transaksi.Head->nama;
+        // cout<<"\nHistory : ";if(histori.Top!=NULL) cout<<histori.Top->nama;
+        cout<<"\nAntrian Pelanggan\n";
+        cout<<"----*(Kasir)*----\n";
+        cout<<"Nama\t | No Hp\t | Status Bayar\n";
+        cout<<"-------------------------------\n";
         traversal(transaksi);
         cout<<"\n1.Pesan Pulsa (multi)";
         cout<<"\n2.Kirim Pulsa";
@@ -227,7 +265,8 @@ int main(){
         cout<<"\n4.Histori Transaksi Selesai";
         cout<<"\n5.Daftar Orang Sudah Bayar";
         cout<<"\n6.Daftar Orang Belum Bayar"; 
-        cout<<"Menu = ";cin>>menu;
+        cout<<"\n7.Exit";
+        cout<<"\nMenu = ";cin>>menu;
         switch (menu)
         {
         case 1:
@@ -237,16 +276,22 @@ int main(){
             kirimPulsa(transaksi);
             break;
         case 3:
+            traversal(archive);
             editStatus(archive);
             break;
         case 4:
             traversalStack(histori);
+            system("Pause");
             break;
         case 5:
-            traversalBayar(archive);
+            //masih error
+            traversalBayar(transaksi);
+            system("Pause");
             break;
         case 6:
-            traversalBelum(archive);
+            //masih error
+            traversalBelum(transaksi);
+            system("Pause");
             break;
         
         default:
