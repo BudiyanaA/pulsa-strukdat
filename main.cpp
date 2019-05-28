@@ -1,9 +1,17 @@
+/**
+ * Budy cell
+ * 
+ * 1. Asep Budiyana M (140810180029)
+ * 2. Difa Bagasputra M (140810180057)
+ * 
+ */
 #include <iostream>
 #include <conio.h>
 #include <fstream>
 #include <string.h>
 using namespace std;
 
+//elemen struct
 struct Elemen{
     string nama;
     string nope;
@@ -15,17 +23,20 @@ struct Elemen{
 typedef Elemen* pointer;
 typedef pointer List;
 
+//Queue
 struct Queue{
     List Head;
     List Tail;
 };
-Queue transaksi,archive;
+Queue transaksi;
 
+//Stack
 struct Stack{
     List Top;
 };
 Stack histori;
 
+//fungsi mencetak struk dalam file .txt
 void cetakStruk(pointer p){
     ofstream struk;
     string data = p->nama;
@@ -46,6 +57,7 @@ void cetakStruk(pointer p){
     return;
 }
 
+//fungsi untuk me-load manual book
 void bacaManual(){
     ifstream manual;
     char text;
@@ -58,11 +70,13 @@ void bacaManual(){
     return;
 }
 
+//membuat sebuah queue
 void createQueue(Queue& Q){
     Q.Head = NULL;
     Q.Tail = NULL;
 }
 
+//membuat elemen transaksi baru
 void createElemen(pointer& p, string nama, string nope, bool pay, int nominal){
     p = new Elemen;
     p->nama = nama;
@@ -73,6 +87,7 @@ void createElemen(pointer& p, string nama, string nope, bool pay, int nominal){
     p->next = NULL;
 }
 
+//enqueue (Insert Queue)
 void enQueue(Queue& Q, pointer p){
     if(Q.Head==NULL && Q.Tail==NULL){
         Q.Head = p;
@@ -84,6 +99,7 @@ void enQueue(Queue& Q, pointer p){
     }
 }
 
+//dequeue (Delete Queue)
 void deQueue(Queue& Q, pointer& pDel){
     if (Q.Head==NULL && Q.Tail==NULL){
         pDel = NULL;
@@ -100,7 +116,8 @@ void deQueue(Queue& Q, pointer& pDel){
         pDel->next=NULL;
     }
 }
-//push
+
+//push (Insert Stack)
 void push(Stack& S, pointer p){
     if (S.Top==NULL){
         S.Top = p;
@@ -110,7 +127,8 @@ void push(Stack& S, pointer p){
         S.Top = p;
     }
 }
-//pop
+
+//pop (Delete Stack) --/ jaga-jaga kalo diperlukan
 void pop(Stack& S,pointer& pDel){
     if(S.Top==NULL){
         pDel = NULL;
@@ -127,6 +145,7 @@ void pop(Stack& S,pointer& pDel){
     }
 }
 
+//mencetak seluruh antrian pelanggan
 void traversal(Queue Q){
     pointer pHelp = Q.Head;
     while(pHelp!=NULL){
@@ -136,6 +155,7 @@ void traversal(Queue Q){
     }
 }
 
+//mencetak yang sudah bayar pada antrian
 void traversalBayar(Queue Q){
     if (Q.Head==NULL) {
         cout<<"List Kosong\n";
@@ -152,6 +172,7 @@ void traversalBayar(Queue Q){
     }
 }
 
+//mencetak yang belum bayar pada antrian
 void traversalBelum(Queue Q){
     if (Q.Head==NULL) {
         cout<<"List Kosong\n";
@@ -168,6 +189,7 @@ void traversalBelum(Queue Q){
     }
 }
 
+//mencetak histori transaksi
 void traversalStack(Stack S){
     if (S.Top==NULL) {
         cout<<"List Kosong\n";
@@ -181,6 +203,7 @@ void traversalStack(Stack S){
     }
 }
 
+//membuat pesanan
 void pesanPulsa(Queue& Q,pointer p){
     int n,nominal;
     string nama, nope;
@@ -196,10 +219,10 @@ void pesanPulsa(Queue& Q,pointer p){
         else pay=false;
         createElemen(p,nama,nope,pay,nominal);
         enQueue(Q,p);
-        enQueue(archive,p);
     }
 }
 
+//melayanani transaksi sesuai antrian
 void kirimPulsa(Queue& Q){
     system("cls");
     string status;
@@ -219,14 +242,13 @@ void kirimPulsa(Queue& Q){
             deQueue(Q,pDel);
             push(histori,pDel);
             cout<<"Pulsa Terkirim..\n";
-            //cetak struk.txt
             cetakStruk(pDel);
             system("pause");
         }
         else{
             cout<<"Customer Belum Bayar\n";
             deQueue(Q,pDel);
-            enQueue(archive,pDel);
+            enQueue(Q,pDel);
             system("pause");
         }
     }
@@ -241,6 +263,8 @@ void kirimPulsa(Queue& Q){
         system("pause");
     }
 }
+
+//mencari nama pelanggan
 void linearSearch(Queue Q, string key,int& status,pointer& p){
     p = Q.Head;
     status = 0;
@@ -250,6 +274,7 @@ void linearSearch(Queue Q, string key,int& status,pointer& p){
     }
 }
 
+//mengedit status pembayaran
 void editStatus(Queue& Q){
     pointer p,pDel;
     string nama;
@@ -277,25 +302,19 @@ void editStatus(Queue& Q){
 int main(){
     pointer p,h;
     int menu;
+    //-------Sample Start-------//
     string nama[3] = {"Budi","Asep","Yana"};
     string nope[3] = {"085722040358","089670427663","082120815276"};
     int nominal[3] = {5000,10000,20000};
     bool pay[3] = {true,false,true};
     createQueue(transaksi);
-    // createElemen(p);
-    // insertQueue(Q,p);
-    // deleteQueue(Q,h);
-    // traversal(Q);
     for (int i=0;i<3;i++){
         createElemen(p,nama[i],nope[i],pay[i],nominal[i]);
         enQueue(transaksi,p);
     }
+    //-------Sample End-------//
     do{
         system("cls");
-        // cuma buat tes
-        // cout<<"\nArchive : ";if(archive.Head!=NULL) cout<<archive.Head->nama;
-        // cout<<"\nKasir   : ";if(transaksi.Head!=NULL) cout<<transaksi.Head->nama;
-        // cout<<"\nHistory : ";if(histori.Top!=NULL) cout<<histori.Top->nama;
         cout<<"\nAntrian Pelanggan\n";
         cout<<"----*(Kasir)*----\n";
         cout<<"Nama\t | No Hp\t | Bayar | Nominal | Harga\n";
@@ -319,8 +338,8 @@ int main(){
             kirimPulsa(transaksi);
             break;
         case 3:
-            traversal(archive);
-            editStatus(archive);
+            traversal(transaksi);
+            editStatus(transaksi);
             break;
         case 4:
             traversalStack(histori);

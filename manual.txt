@@ -4,14 +4,14 @@
 orang sekaligus
 2. Kirim Pulsa
 --> apabila customer belum membayar, maka
-data customer akan masuk ke queue arsip (untuk
-di edit status Pembayarannya lewat menu no,3)
+pengiriman pada customer tersebut tidak bisa dilakukan 
+(harus di edit status Pembayarannya lewat menu no,3)
 --> apabila customer sudah membayar, maka 
 data customer akan masuk ke stack histori
 (bisa dilihat lewat menu no.4)
 3. Edit status Pembayaran
 --> untuk mengedit apakah customer telah
-membayar atau Tidak
+membayar atau Tidak (pada queue antrian)
 4. Histori Transaksi Selesai
 --> Berupa stack
 5. Daftar orang sudah bayar
