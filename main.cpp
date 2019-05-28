@@ -346,12 +346,10 @@ int main(){
             system("Pause");
             break;
         case 5:
-            //masih error
             traversalBayar(transaksi);
             system("Pause");
             break;
         case 6:
-            //masih error
             traversalBelum(transaksi);
             system("Pause");
             break;
